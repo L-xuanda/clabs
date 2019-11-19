@@ -9,7 +9,7 @@ int main()
     {
         m++;
     }
-    while (((t[n] = getchar()) != '\0') && (t[n] != '\n') && s[m] == ' ')
+    while (((t[n] = getchar()) != EOF) && (t[n] != '\n') && s[m] == ' ')
     {
         n++;
     }
