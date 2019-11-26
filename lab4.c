@@ -16,19 +16,30 @@ void ungetch(int c)
     else
         buf[bufp++] = c;
 }
-char stack[100];
+double stack[100];
 int topindex = 0;
 int getch(void);
 void ungetch(int);
-int getop(char s[ ])
+int getop(char s[])
 {
     int i, c;
     while ((s[0] = c = getch()) == ' ' || c == '\t')
         ;
     s[1] = '\0';
-    if (!isdigit(c) && c != '.')
-        return c;
     i = 0;
+    if (!isdigit(c) && c != '.' && c != '-')
+        return c;
+    if (c == '-')
+    {
+        if (isdigit(c = getch()))
+            s[++i] = c;
+        else{
+            if(c!=EOF){               
+            ungetch(c);
+            }
+        return '-';
+        }
+    }
     if (isdigit(c))
         while (isdigit(s[++i] = c = getch()))
             ;
@@ -39,19 +50,8 @@ int getop(char s[ ])
     if (c != EOF)
         ungetch(c);
     return NUMBER;
-    if(c=='-'){
-       if ( isdigit(s[++i] ))
-        -s[++i]==getch( );
-        
-       else {
-           if (c!=EOF)
-           ungetch(c);
-           return '-';
-       }
-        
-    }
 }
-void push(double  a)
+void push(double a)
 {
     if (topindex <= 98)
     {
@@ -64,23 +64,21 @@ void push(double  a)
     }
 }
 
-int  pop(void)
+double pop(void)
 {
     if (topindex >= 0)
     {
-        int result;
-        result = stack[--topindex];
-        return result;
+        return stack[--topindex];
     }
     else
     {
-        printf("no ");
-        printf("\n");
+        printf("empty \n");
+
     }
 }
-int  top(void)
+int top(void)
 {
-    if (topindex >= 0)
+    if (topindex > 0)
     {
         return stack[topindex];
     }
@@ -90,8 +88,46 @@ int  top(void)
         printf("/n");
     }
 }
-void print (void){
-    printf("%d\n",stack[topindex-1]);
+void print(void)
+{
+    printf("%f\n", stack[topindex - 1]);
+}
+double copy(void)
+{
+    double n;
+    if (topindex>0){
+    push(n=stack[topindex-1]);
+    return n;}
+    else {
+        printf("empty\n");
+    }
+}
+int exchange()
+{
+    double op2;
+    if (topindex>1){
+        op2 = stack[topindex - 1];
+            stack[topindex - 1] = stack[topindex - 2];
+            stack[topindex - 2] = op2;
+            return 1;}
+        else
+        {
+            printf("not enough\n");
+            return 0;
+        }
+        
+    }
+
+int delete(void){
+int n;
+if (topindex>0){
+n=topindex=0;
+return n;
+}
+else{
+    printf("empty");
+    return 0;
+}
 }
 int main()
 {
@@ -107,7 +143,7 @@ int main()
         switch (type)
         {
         case NUMBER:
-            push(atoi(s));
+            push(atof(s));
             break;
 
         case '+':
@@ -131,31 +167,28 @@ int main()
                 printf("errror");
             }
         case '\n':
-            printf("%d\n", pop());
+            printf("result = %2.8g\n", pop());
             break;
         case '%':
-          op2 = pop();
-          if(op2!=0)
-          push(pop()%op2);
-          else{
-              printf("error");
-          }
-          case 'p':
-              print();
-              break;
+            op2 = pop();
+            if (op2 != 0)
+                push((int)pop() % (int)op2);
+            else
+            {
+                printf("error");
+            }
+        case 'p':
+            print();
+            break;
         case 'c':
-          push(stack[topindex-1]);
-                 push(stack[topindex-1]);
-            
-              break;
+            copy();
+            break;
         case 'e':
-             op2=stack[topindex-1];
-             stack[topindex-1]=stack[topindex-2];
-             stack[topindex-2]=op2;
-             break;
+          exchange();
+            break;
         case 'd':
-           topindex=0;
-           break;
+           delete();
+            break;
         }
     }
 }
