@@ -38,7 +38,7 @@ int getfloat(float* p)
   int c,sign;
  while(isspace(c=getch()))
  ;
- 
+
  if(!isdigit(c)&&c!='+'&&c!='-'&&c!='.'&&c!=EOF&&c!='\n')
   {  
     ungetch(c);
@@ -54,10 +54,10 @@ int getfloat(float* p)
     c=getch();
   for(power=1.0;isdigit(c);c=getch())
   {    
-      power=10*power;
+      power=10*power; 
       *p=10**p+(c-'0');
   }
-  *p=*p*(sign/power);
+  *p=*p*(1/power);
   if(c!=EOF)
     ungetch(c);
    return c;
